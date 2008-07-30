@@ -13,6 +13,7 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Catalyst/Controller/POD.pm
 lib/Catalyst/Controller/POD/POM/View.pm
+lib/Catalyst/Controller/POD/Search.pm
 lib/Catalyst/Controller/POD/Template.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -629,3 +630,9 @@ share/ext/resources/raw-images/shadow.psd
 share/ext/resources/resources.jsb
 share/resources/collapse-all.gif
 share/resources/expand-all.gif
+t/00-load.t
+t/01-run-testapp.t
+t/lib/TestApp.pm
+t/lib/TestApp/Controller/Docs.pm
+t/lib/TestApp/Controller/Root.pm
+t/lib/TestApp/testapp.conf

@@ -1,5 +1,9 @@
 Revision history for Catalyst-Controller-POD
 
-0.01    Date/time
+0.01_03  2008-07-30
+         - A lot of new feature
+         - added some basic tests, more to come
+
+0.01_01    Date/time
         First version, released on an unsuspecting world.
 

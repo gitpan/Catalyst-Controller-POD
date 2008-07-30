@@ -8,87 +8,225 @@ use File::Slurp;
 use Pod::Simple::Search;
 use JSON::XS;
 use Pod::POM;
+use Pod::TOC;
+use XML::Simple;
 use LWP::Simple;
 use List::MoreUtils qw(uniq);
 use base "Catalyst::Controller";
-use base "Class::Accessor::Fast";
+
+
 
 use lib(qw(/Users/mo/Documents/workspace/Catalyst-Controller-POD/lib));
-
 use Catalyst::Controller::POD::Template;
-__PACKAGE__->mk_accessors(qw(_dist_dir));
+
+use base "Catalyst::Controller::POD::Search";
+
+__PACKAGE__->mk_accessors(qw(_dist_dir inc namespaces self dir));
+
 
 =head1 NAME
 
-Catalyst::Controller::POD - The great new Catalyst::Controller::POD!
+Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 
 =head1 VERSION
 
-Version 0.01
+Version 0.01_03 (DEV-Release!)
 
 =cut
-our $VERSION = '0.01_02';
+our $VERSION = '0.01_03';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Create a new controller and paste this code:
 
-Perhaps a little code snippet.
+  package MyApp::YourNewController;  # <-- Change this to your controller
+  
+  use strict;
+  use warnings;
+  use base 'Catalyst::Controller::POD';
+  __PACKAGE__->config(
+    inc        => 1,
+    namespaces => [qw(Catalyst::Manual*)],
+    self       => 1,
+    dirs       => [qw()]
+  );
+  1;
 
-    use Catalyst::Controller::POD;
+=head1 DESCRIPTION
 
-    my $foo = Catalyst::Controller::POD->new();
-    ...
+This is a catalyst controller which serves PODs. It allows you to browse through your local
+repository of modules. On the front page of this controller is a search box
+which uses CPAN's xml interface to retrieve the results. If you click on one of them
+the POD is displayed in this application.
 
-=head1 EXPORT
+Cross links in PODs are resolved and pop up as a new tab. If the module you clicked on is
+not installed this controller fetches the source code from CPAN and creates the pod locally.
+There is also a TOC which is always visible and scrolls the current POD to the selected section.
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+It is written using a JavaScript framework called ExtJS (L<http://www.extjs.com>) which
+generate beautiful and intuitive interfaces.
 
-=head1 FUNCTIONS
+Have a look:
 
-=head2 function1
+=begin html
+
+<center>
+<img src="http://cpan.org/authors/id/P/PE/PERLER/pod-images/pod-encyclopedia-01.png" width="882" height="462" />
+</center>
+
+=end html
+
+=head1 CONFIGURATION
+
+=over
+
+=item inc (Boolean)
+
+Search for modules in @INC. Set it to 1 or 0.
+
+=item namespaces (Arrayref)
+
+Filter by namespaces. See L<Pod::Simple::Search> C<limit_glob> for syntax.
+
+=item self (Boolean)
+
+Search for modules in C<< $c->path_to( 'lib' ) >>.
+
+=item dirs (Arrayref)
+
+Search for modules in these directories.
+
+=head1 NOTICE
+
+This is still in development. Don't expect too much. There are still many bugs but I'm happy for every bug ticket you L<report|/BUGS>.
+
+There is going to be a catalyst stand-alone server which runs this controller. I'll release it soon.
 
 =cut
 
+sub search : Local {
+	my ( $self, $c ) = @_;
+	my $k = $c->req->param("value");
+	my $s = $c->req->param("start");
+	my $url = new URI("http://search.cpan.org/search");
+	$url->query_form_hash(
+		query  => $k,
+		mode   => "module",
+		n      => 50,
+		format => "xml",
+		s      => $s
+	);
+	my $ua = new LWP::UserAgent;
+	$ua->timeout(15);
+	$c->log->debug("get url ".$url->canonical);
+	my $response = $ua->get($url);
+	my $xml = $response->content;
+	my $data;
+	eval{ $data = XMLin($xml, keyattr => [] )};
+	if(@$) {
+		$c->res->body("[]");
+		return;
+	}
+	my $output = {count => $data->{matches}};
+	while(my($k,$v) = each %{$output->{module}}) {
+		
+	}
+	$c->res->body(encode_json($data));
+}
+
+
 sub module : Local {
 	my ( $self, $c, $module ) = @_;
+	my $search = Pod::Simple::Search->new->inc( $self->inc || 0 );
+	push( @{ $self->{dirs} }, $c->path_to('lib')->stringify )
+	  if ( $self->{self} );
 	my $name2path =
-	  Pod::Simple::Search->new($module)->inc(0)
-	  ->survey( $c->path_to('lib')->stringify );
-
-		my $view = "Catalyst::Controller::POD::POM::View";
-		Pod::POM->default_view($view)
-		  || die "$Pod::POM::ERROR\n";
-		
-		my $parser = Pod::POM->new( warn => 0 )
-		  || die "$Pod::POM::ERROR\n";
-		  $view->_root($self->_root);
-		  $view->_module($module);
-		
+	  $search->limit_glob($module)->survey( @{ $self->{dirs} } );
+	my $view = "Catalyst::Controller::POD::POM::View";
+	Pod::POM->default_view($view);
+	my $parser = Pod::POM->new( warn => 0 );
+	$view->_root( $self->_root($c) );
+	$view->_module($module);
 	my $pom;
-	if ( $name2path->{$module} ) {
 
+	if ( $name2path->{$module} ) {
+		$c->log->debug("Getting POD from local store");
+		$view->_toc( _get_toc( $name2path->{$module} ) );
 		$pom = $parser->parse_file( $name2path->{$module} )
 		  || die $parser->error(), "\n";
 	} else {
+		$c->log->debug("Getting POD from CPAN");
 		my $html = get( "http://search.cpan.org/perldoc?" . $module );
 		$html =~ s/.*<a href="(.*?)">Source<\/a>.*/$1/s;
-		my $source = get("http://search.cpan.org". $html);
-		$pom = $parser->parse_text( $source )
+		my $source = get( "http://search.cpan.org" . $html );
+		$c->log->debug("Get source from http://search.cpan.org" . $html);
+		$view->_toc( _get_toc( $source ) );
+		$pom = $parser->parse_text($source)
 		  || die $parser->error(), "\n";
-		
+		#$c->log->debug("$source");
 	}
-	$c->res->body( $view->print($pom) );
+	Pod::POM->default_view("Catalyst::Controller::POD::POM::View");
+	$c->res->body( "$pom" );
+}
+
+sub _get_toc {
+	my $source = shift;
+	my $toc;
+	my $parser = Pod::POM->new( warn => 0 );
+	my $view = "Pod::POM::View::TOC";
+	Pod::POM->default_view($view);
+	my $pom = $parser->parse($source);
+	$toc = $view->print($pom);
+	return encode_json( _toc_to_json( [], split( /\n/, $toc ) ) );
+}
+
+sub _toc_to_json {
+	my $tree     = shift;
+	my @sections = @_;
+	my @uniq     = uniq( map { ( split(/\t/) )[0] } @sections );
+	foreach my $root (@uniq) {
+		next unless ($root);
+		push( @{$tree}, { text => $root } );
+		my ( @children, $start );
+		for (@sections) {
+			if ( $_ =~ /^\Q$root\E$/ ) {
+				$start = 1;
+			} elsif ( $start && $_ =~ /^\t(.*)$/ ) {
+				push( @children, $1 );
+			} elsif ( $start && $_ =~ /^[^\t]+/ ) {
+				last;
+			}
+		}
+		unless (@children) {
+			$tree->[-1]->{leaf} = \1;
+			next;
+		}
+		$tree->[-1]->{children} = [];
+		$tree->[-1]->{children} =
+		  _toc_to_json( $tree->[-1]->{children}, @children );
+	}
+	return $tree;
 }
 
 sub modules : Local {
-	my ( $self, $c ) = @_;
-	my $name2path =
-	  Pod::Simple::Search->new('Memoria::*')->inc(0)
-	  ->survey( $c->path_to('lib')->stringify );
+	my ( $self, $c, $find ) = @_;
+	my $search = Pod::Simple::Search->new->inc( $self->{inc} || 0 );
+	push( @{ $self->{dirs} }, $c->path_to('lib')->stringify )
+	  if ( $self->{self} );
+	my $name2path = {};
+
+		for ( @{ $self->{namespaces} } ) {
+			my $found =
+			  Pod::Simple::Search->new->inc( $self->{inc} || 0 )
+				  ->limit_glob($_)->survey( @{ $self->{dirs} } );
+			%{$name2path} = (
+				%{$name2path}, %{$found}
+			);
+		}
+	
 	my @modules;
 	while ( my ( $k, $v ) = each %$name2path ) {
+		next if($find && $k !~ /\Q$find\E/ig);
 		push( @modules, $k );
 	}
 	@modules = sort @modules;
@@ -122,10 +260,11 @@ sub _build_module_tree : Private {
 }
 
 sub _root {
-	my ($self, $c) = @_;
-	#my $root = $c->uri_for( $self->action_for(" static ") . "/.." );
-	return "http://localhost:3000/docs";
-				
+	my ( $self, $c ) = @_;
+	my $index = $c->uri_for( __PACKAGE__->config->{path} );
+
+	#$index  =~ s/\/index//g;
+	return $index;
 }
 
 sub new {
@@ -134,24 +273,22 @@ sub new {
 	my $path;
 	eval { $path = dist_file( 'Catalyst-Controller-POD', 'docs.js' ); };
 	if ($@) {
+		# I'm on my local machine
 		$path = "/Users/mo/Documents/workspace/Catalyst-Controller-POD/share";
 	} else {
 		my ( $volume, $dirs, $file ) = File::Spec->splitpath($path);
 		$path = File::Spec->catfile( $volume, $dirs );
 	}
 	$new->_dist_dir($path);
-	
-	
 	return $new;
 }
 
 sub index : Path : Args(0) {
 	my ( $self, $c ) = @_;
-	
-		$c->res->content_type('text/html; charset=utf-8');
+	$c->res->content_type('text/html; charset=utf-8');
 	$c->response->body(
 		Catalyst::Controller::POD::Template->get(
-			$c->uri_for( $self->action_for("static") )
+			$self->_root($c) . "/static"
 		)
 	);
 }
@@ -166,7 +303,7 @@ sub static : Path("static") {
 		$c->res->content_type('text/html; charset=utf-8');
 	} else {
 		if ( $file eq "docs.js" ) {
-			my $root = $self->_root;
+			my $root = $self->_root($c);
 			$data =~ s/\[% root %\]/$root/g;
 		}
 		$c->response->body($data);
@@ -228,5 +365,4 @@ under the same terms as Perl itself.
 
 
 =cut
-
 1;    # End of Catalyst::Controller::POD

@@ -1,10 +1,11 @@
 ---
-abstract: 'The great new Catalyst::Controller::POD!'
+abstract: 'Serves PODs right from your Catalyst application'
 author:
   - 'Moritz Onken, C<< <onken at houseofdesign.de> >>'
 build_requires:
   ExtUtils::MakeMaker: 6.11
   Test::More: 0.42
+  Test::WWW::Mechanize::Catalyst: 0
 distribution_type: module
 generated_by: 'Module::Install version 0.75'
 license: perl
@@ -28,6 +29,9 @@ requires:
   LWP::Simple: 0
   List::MoreUtils: 0
   Pod::POM: 0
+  Pod::POM::View::TOC: 0.02
   Pod::Simple: 0
+  Pod::TOC: 1.08
   Test::More: 0
-version: 0.01_02
+  XML::Simple: 0
+version: 0.01_03

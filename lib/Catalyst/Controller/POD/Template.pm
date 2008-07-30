@@ -9,7 +9,7 @@ sub get {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
  <head>
-  <title>Documentation</title>
+  <title>Pod::Browser</title>
 
   <link rel="stylesheet" type="text/css" href="$root/ext/resources/css/ext-all.css"></link>
   <link rel="stylesheet" href="http://search.cpan.org/s/style.css" type="text/css"></link>
