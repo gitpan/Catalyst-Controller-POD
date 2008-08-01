@@ -11,7 +11,7 @@ our $VERSION = '0.01';
 __PACKAGE__->config( name => 'TestApp' ,
 "Controller::Root" => {}
 );
-__PACKAGE__->setup(qw/ ConfigLoader/);
+__PACKAGE__->setup(qw//);
 
 
 1;

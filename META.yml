@@ -5,7 +5,7 @@ author:
 build_requires:
   ExtUtils::MakeMaker: 6.11
   Test::More: 0.42
-  Test::WWW::Mechanize::Catalyst: 0
+  Test::WWW::Mechanize::Catalyst: 0.41
 distribution_type: module
 generated_by: 'Module::Install version 0.75'
 license: perl
@@ -21,17 +21,16 @@ no_index:
     - t
 requires:
   Catalyst::Controller: 0
-  Class::Accessor::Fast: 0
-  File::Find: 0
-  File::ShareDir: 0
-  File::Slurp: 0
-  JSON::XS: 0
-  LWP::Simple: 0
-  List::MoreUtils: 0
-  Pod::POM: 0
+  Class::Accessor::Fast: 0.31
+  File::Find: 0.05
+  File::ShareDir: 0.05
+  File::Slurp: 9999
+  JSON::XS: 2.21
+  LWP::Simple: 5.810
+  List::MoreUtils: 0.22
+  Pod::POM: 0.17
   Pod::POM::View::TOC: 0.02
-  Pod::Simple: 0
-  Pod::TOC: 1.08
+  Pod::Simple: 3.05
   Test::More: 0
-  XML::Simple: 0
-version: 0.01_03
+  XML::Simple: 2.18
+version: 0.02

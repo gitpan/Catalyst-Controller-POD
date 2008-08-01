@@ -23,6 +23,10 @@ use base "Catalyst::Controller::POD::Search";
 
 __PACKAGE__->mk_accessors(qw(_dist_dir inc namespaces self dir));
 
+__PACKAGE__->config(
+ self => 1,
+ namespaces => ["*"]
+);
 
 =head1 NAME
 
@@ -30,10 +34,10 @@ Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 
 =head1 VERSION
 
-Version 0.01_03 (DEV-Release!)
+Version 0.02
 
 =cut
-our $VERSION = '0.01_03';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -66,15 +70,7 @@ There is also a TOC which is always visible and scrolls the current POD to the s
 It is written using a JavaScript framework called ExtJS (L<http://www.extjs.com>) which
 generate beautiful and intuitive interfaces.
 
-Have a look:
-
-=begin html
-
-<center>
-<img src="http://cpan.org/authors/id/P/PE/PERLER/pod-images/pod-encyclopedia-01.png" width="882" height="462" />
-</center>
-
-=end html
+Have a look at L<http://cpan.org/authors/id/P/PE/PERLER/pod-images/pod-encyclopedia-01.png>
 
 =head1 CONFIGURATION
 
@@ -84,23 +80,33 @@ Have a look:
 
 Search for modules in @INC. Set it to 1 or 0.
 
+Defaults to C<0>.
+
 =item namespaces (Arrayref)
 
 Filter by namespaces. See L<Pod::Simple::Search> C<limit_glob> for syntax.
+
+Defaults to C<["*"]>
 
 =item self (Boolean)
 
 Search for modules in C<< $c->path_to( 'lib' ) >>.
 
+Defaults to C<1>.
+
 =item dirs (Arrayref)
 
 Search for modules in these directories.
 
+Defaults to C<[]>.
+
 =head1 NOTICE
 
-This is still in development. Don't expect too much. There are still many bugs but I'm happy for every bug ticket you L<report|/BUGS>.
+This module works fine for most PODs but there are a few which do not get rendered properly. 
+Please report any bug you find. See L</BUGS>.
 
-There is going to be a catalyst stand-alone server which runs this controller. I'll release it soon.
+Have a look at L<Pod::Browser> which is a catalyst application running this controller. You
+can use it as a stand-alone POD server.
 
 =cut
 
@@ -309,6 +315,10 @@ sub static : Path("static") {
 		$c->response->body($data);
 	}
 }
+
+=head1 TODO
+
+Write more tests!
 
 =head1 AUTHOR
 
