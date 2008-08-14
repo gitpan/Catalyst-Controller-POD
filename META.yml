@@ -33,4 +33,4 @@ requires:
   Pod::Simple: 3.05
   Test::More: 0
   XML::Simple: 2.18
-version: 0.02
+version: 0.02001

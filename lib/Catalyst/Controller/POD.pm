@@ -8,7 +8,6 @@ use File::Slurp;
 use Pod::Simple::Search;
 use JSON::XS;
 use Pod::POM;
-use Pod::TOC;
 use XML::Simple;
 use LWP::Simple;
 use List::MoreUtils qw(uniq);
@@ -37,7 +36,7 @@ Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 Version 0.02
 
 =cut
-our $VERSION = '0.02';
+our $VERSION = '0.02001';
 
 =head1 SYNOPSIS
 

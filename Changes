@@ -1,5 +1,8 @@
 Revision history for Catalyst-Controller-POD
 
+0.02001  2008-08-09
+         - removed Pod::TOC dependency
+
 0.01_03  2008-07-30
          - A lot of new feature
          - added some basic tests, more to come
