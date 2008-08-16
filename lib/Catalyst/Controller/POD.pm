@@ -36,7 +36,7 @@ Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 Version 0.02
 
 =cut
-our $VERSION = '0.02001';
+our $VERSION = '0.02002';
 
 =head1 SYNOPSIS
 
