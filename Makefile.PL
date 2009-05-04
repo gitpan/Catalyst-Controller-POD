@@ -11,6 +11,7 @@ requires 'File::Find'            => "0.05";
 requires 'File::ShareDir'        => "0.05";
 requires 'File::Slurp'           => "9999";
 requires 'Pod::Simple'           => "3.05";
+#requires 'File::Wildcard';
 requires 'JSON::XS'              => "2.21";
 requires 'Pod::POM'              => "0.17";
 requires 'LWP::Simple'           => "5.810";

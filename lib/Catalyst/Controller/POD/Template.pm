@@ -12,8 +12,8 @@ sub get {
   <title>Pod::Browser</title>
 
   <link rel="stylesheet" type="text/css" href="$root/ext/resources/css/ext-all.css"></link>
-  <link rel="stylesheet" href="http://search.cpan.org/s/style.css" type="text/css"></link>
-  <link rel="stylesheet" href="$root/docs.css" type="text/css" />
+  <link rel="stylesheet" href="$root/cpan.css" type="text/css"></link>
+  <link rel="stylesheet" href="$root/docs.css" type="text/css"></link>
   <script type="text/javascript" src="$root/ext/adapter/ext/ext-base.js"></script>
   <script type="text/javascript" src="$root/ext/ext-all-debug.js"></script>
   

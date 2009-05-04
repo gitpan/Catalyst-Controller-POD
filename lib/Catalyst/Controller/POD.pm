@@ -11,7 +11,6 @@ use Pod::POM;
 use XML::Simple;
 use LWP::Simple;
 use List::MoreUtils qw(uniq);
-use base "Catalyst::Controller";
 
 
 
@@ -36,7 +35,7 @@ Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 Version 0.02
 
 =cut
-our $VERSION = '0.02002';
+our $VERSION = '0.02003';
 
 =head1 SYNOPSIS
 

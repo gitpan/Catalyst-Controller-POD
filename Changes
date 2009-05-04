@@ -1,5 +1,7 @@
 Revision history for Catalyst-Controller-POD
 
+0.02003  2009-05-03
+         - Works with Catalyst 5.8 (reported by T. Hosaka)
 
 0.02002  2008-08-16
          - requires parent

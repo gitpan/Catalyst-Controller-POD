@@ -56,7 +56,7 @@ POD.filterTree = function (e){
 		tree.collapseAll();
 		return;
 	}
-	tree.expandAll();
+	//tree.expandAll();
 	
 	var re = new RegExp(Ext.escapeRe(text), 'i');
 	filter.filterBy(function(n){
