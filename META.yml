@@ -38,4 +38,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/monken/Catalyst-Controller-POD/tree/master
-version: 0.02005
+version: 0.02006
