@@ -36,7 +36,7 @@ Catalyst::Controller::POD - Serves PODs right from your Catalyst application
 Version 0.02
 
 =cut
-our $VERSION = '0.02004';
+our $VERSION = '0.02005';
 
 =head1 SYNOPSIS
 
@@ -162,13 +162,17 @@ sub module : Local {
 	} else {
 		$c->log->debug("Getting POD from CPAN") if($c->debug);
 		my $html = get( "http://search.cpan.org/perldoc?" . $module );
-		$html =~ s/.*<a href="(.*?)">Source<\/a>.*/$1/s;
-		my $source = get( "http://search.cpan.org" . $html );
-		$c->log->debug("Get source from http://search.cpan.org" . $html) if($c->debug);
+	    my $source;
+		if($html && $html =~ /.*<a href="(.*?)">Source<\/a>.*/) {
+		    $html =~ s/.*<a href="(.*?)">Source<\/a>.*/$1/s;
+    		$c->log->debug("Get source from http://search.cpan.org" . $html) if($c->debug);
+    		$source = get( "http://search.cpan.org" . $html );
+        } else {
+            $source = "=head1 ERROR\n\nThis module could not be found.";
+        }
 		$view->_toc( _get_toc( $source ) );
 		$pom = $parser->parse_text($source)
 		  || die $parser->error(), "\n";
-		#$c->log->debug("$source");
 	}
 	Pod::POM->default_view("Catalyst::Controller::POD::POM::View");
 	$c->res->body( "$pom" );
@@ -274,7 +278,7 @@ sub _root {
 
 sub new {
 	my $self = shift;
-	my $new  = $self->NEXT::new(@_);
+	my $new  = $self->next::method(@_);
 	my $path;
 	eval { $path = dist_file( 'Catalyst-Controller-POD', 'docs.js' ); };
 	if ($@) {

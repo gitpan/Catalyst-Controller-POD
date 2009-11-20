@@ -16,7 +16,6 @@ lib/Catalyst/Controller/POD/Template.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
-README
 share/cpan.css
 share/docs.css
 share/docs.js
