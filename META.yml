@@ -1,7 +1,7 @@
 ---
 abstract: 'Serves PODs right from your Catalyst application'
 author:
-  - 'Moritz Onken <onken@houseofdesign.de>'
+  - 'Moritz Onken <onken@netcubed.de>'
 build_requires:
   ExtUtils::MakeMaker: 6.42
   Test::More: 0.42
@@ -9,7 +9,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.91'
+generated_by: 'Module::Install version 0.94'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -29,6 +29,7 @@ requires:
   JSON::XS: 2.21
   LWP::Simple: 5.810
   List::MoreUtils: 0.22
+  Path::Class::File: 0
   Pod::POM: 0.17
   Pod::POM::View::TOC: 0.02
   Pod::Simple: 3.05
@@ -38,4 +39,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
   repository: http://github.com/monken/Catalyst-Controller-POD/tree/master
-version: 0.02006
+version: 0.02007
