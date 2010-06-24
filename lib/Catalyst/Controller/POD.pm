@@ -12,15 +12,11 @@ use Pod::POM;
 use XML::Simple;
 use LWP::Simple;
 use List::MoreUtils qw(uniq);
-
-our $VERSION = 0.02007;
-
-
-
-use lib(qw(/Users/mo/Documents/workspace/Catalyst-Controller-POD/lib));
 use Catalyst::Controller::POD::Template;
 
-use base "Catalyst::Controller::POD::Search";
+use base "Catalyst::Controller";
+
+our $VERSION = 0.02008;
 
 __PACKAGE__->mk_accessors(qw(_dist_dir inc namespaces self dir show_home_tab initial_module home_tab_content expanded_module_tree));
 
@@ -240,20 +236,18 @@ sub get_home_tab_content : Path("home_tab_content") {
 
 sub static : Path("static") {
 	my ( $self, $c, @file ) = @_;
-	my $file = File::Spec->catfile(@file);
-	my $data;
-	eval { $data = read_file( $self->_dist_dir . "/" . $file ) };
-	if ($@) {
-		$c->res->status(404);
-		$c->res->content_type('text/html; charset=utf-8');
-	} else {
-		if ( $file eq "docs.js" ) {
-			_replace_template_vars(\$data, "root",                       $self->_root($c));
-			_replace_template_vars(\$data, "initial_module",             $self->initial_module);
-			_replace_template_vars(\$data, "show_home_tab",              $self->show_home_tab ? "true" : "false");
-			_replace_template_vars(\$data, "expand_module_tree_on_load", $self->expanded_module_tree ? "true" : "false");
-		}
+	my $file = File::Spec->catfile($self->_dist_dir, @file);
+	if ( $file[-1] eq "docs.js" ) {
+	    my $data;
+        eval { $data = read_file( $file ) };
+		_replace_template_vars(\$data, "root",                       $self->_root($c));
+		_replace_template_vars(\$data, "initial_module",             $self->initial_module);
+		_replace_template_vars(\$data, "show_home_tab",              $self->show_home_tab ? "true" : "false");
+		_replace_template_vars(\$data, "expand_module_tree_on_load", $self->expanded_module_tree ? "true" : "false");
+		$c->res->content_type('application/json');
 		$c->response->body($data);
+	} else {
+	    $c->serve_static_file($file);
 	}
 }
 
@@ -302,7 +296,9 @@ There is also a TOC which is always visible and scrolls the current POD to the s
 It is written using a JavaScript framework called ExtJS (L<http://www.extjs.com>) which
 generate beautiful and intuitive interfaces.
 
-Have a look at L<http://cpan.org/authors/id/P/PE/PERLER/pod-images/pod-encyclopedia-01.png>
+Have a look at L<http://cpan.org/authors/id/P/PE/PERLER/pod-images/pod-encyclopedia-01.png>.
+
+B<< L<Catalyst::Plugin::Static::Simple> is required and has to be loaded. >>
 
 =head1 CONFIGURATION
 

@@ -10,7 +10,6 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Catalyst/Controller/POD.pm
 lib/Catalyst/Controller/POD/POM/View.pm
-lib/Catalyst/Controller/POD/Search.pm
 lib/Catalyst/Controller/POD/Template.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -19,7 +18,9 @@ share/cpan.css
 share/docs.css
 share/docs.js
 share/ext/adapter/ext/ext-base.js
+share/ext/ext-all-debug.js
 share/ext/ext-all.js
+share/ext/ext-core-debug.js
 share/ext/resources/css/ext-all.css
 share/ext/resources/images/default/box/corners-blue.gif
 share/ext/resources/images/default/box/corners.gif
