@@ -1,3 +1,12 @@
+#
+# This file is part of Catalyst-Controller-POD
+#
+# This software is Copyright (c) 2011 by Moritz Onken.
+#
+# This is free software, licensed under:
+#
+#   The (three-clause) BSD License
+#
 package TestApp;
 
 use strict;
@@ -7,7 +16,6 @@ use Catalyst::Runtime '5.70';
 
 use parent qw/Catalyst/;
 
-our $VERSION = '0.01';
 __PACKAGE__->config( name => 'TestApp' ,
 "Controller::Root" => {}
 );

@@ -1,5 +1,10 @@
 Revision history for Catalyst-Controller-POD
 
+1.0.0    2011-01-25
+         - Using Google Prettify for Source Code Highlighting
+         - Updated ExtJS to 3.3.1
+         - using Dist::Zilla
+
 0.02008  2010-06-24
          - using Static::Simple to deliver static files
          - Cleanup

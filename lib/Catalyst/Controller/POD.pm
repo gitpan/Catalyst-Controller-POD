@@ -1,4 +1,17 @@
+#
+# This file is part of Catalyst-Controller-POD
+#
+# This software is Copyright (c) 2011 by Moritz Onken.
+#
+# This is free software, licensed under:
+#
+#   The (three-clause) BSD License
+#
 package Catalyst::Controller::POD;
+BEGIN {
+  $Catalyst::Controller::POD::VERSION = '1.0.0';
+}
+# ABSTRACT: Serves PODs right from your Catalyst application
 use warnings;
 use strict;
 use File::Find qw( find );
@@ -15,8 +28,6 @@ use List::MoreUtils qw(uniq);
 use Catalyst::Controller::POD::Template;
 
 use base "Catalyst::Controller";
-
-our $VERSION = 0.02008;
 
 __PACKAGE__->mk_accessors(qw(_dist_dir inc namespaces self dir show_home_tab initial_module home_tab_content expanded_module_tree));
 
@@ -209,7 +220,7 @@ sub _root {
 sub new {
     my $class = shift;
     my $self  = $class->next::method(@_);
-    my $file  = Path::Class::File->new( 'share', 'dist.js' );
+    my $file  = Path::Class::File->new( 'share', 'docs.js' );
     eval {
         $file = Path::Class::File->new(
             dist_file( 'Catalyst-Controller-POD', 'docs.js' ) );
@@ -259,11 +270,17 @@ sub _replace_template_vars {
 
 1;
 
-__END__
+
+
+=pod
 
 =head1 NAME
 
 Catalyst::Controller::POD - Serves PODs right from your Catalyst application
+
+=head1 VERSION
+
+version 1.0.0
 
 =head1 SYNOPSIS
 
@@ -366,62 +383,26 @@ can use it as a stand-alone POD server.
 
 Write more tests!
 
-=head1 AUTHOR
-
-Moritz Onken <onken@netcubed.de>
-
 =head1 CONTRIBUTORS
 
 Tristan Pratt
 
-=head1 BUGS
+=cut
 
-Please report any bugs or feature requests to C<bug-catalyst-controller-pod at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Catalyst-Controller-POD>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+=head1 AUTHOR
 
+Moritz Onken
 
+=head1 COPYRIGHT AND LICENSE
 
+This software is Copyright (c) 2011 by Moritz Onken.
 
-=head1 SUPPORT
+This is free software, licensed under:
 
-You can find documentation for this module with the perldoc command.
-
-    perldoc Catalyst::Controller::POD
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Catalyst-Controller-POD>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Catalyst-Controller-POD>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Catalyst-Controller-POD>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Catalyst-Controller-POD>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008 Moritz Onken, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
+  The (three-clause) BSD License
 
 =cut
+
+
+__END__
+

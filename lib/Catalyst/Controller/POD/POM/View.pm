@@ -1,4 +1,16 @@
+#
+# This file is part of Catalyst-Controller-POD
+#
+# This software is Copyright (c) 2011 by Moritz Onken.
+#
+# This is free software, licensed under:
+#
+#   The (three-clause) BSD License
+#
 package Catalyst::Controller::POD::POM::View;
+BEGIN {
+  $Catalyst::Controller::POD::POM::View::VERSION = '1.0.0';
+}
 use strict;
 use warnings;
 
@@ -58,7 +70,7 @@ sub view_pod {
 <div class="pod">
 ~
    . $pod->content->present($self)
-        . "</div></body></html>\n";
+        . "<script>prettyPrint()</script></div></body></html>\n";
 }
 
 sub view_verbatim {
@@ -84,7 +96,7 @@ sub view_verbatim {
         last if($last);
     }
 
-    return "<pre>$text</pre>\n\n";
+    return "<pre class=\"prettyprint lang-perl\">$text</pre>\n\n";
 }
 
 sub view_seq_link_transform_path {
@@ -148,3 +160,29 @@ sub view_head4 {
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Catalyst::Controller::POD::POM::View
+
+=head1 VERSION
+
+version 1.0.0
+
+=head1 AUTHOR
+
+Moritz Onken
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2011 by Moritz Onken.
+
+This is free software, licensed under:
+
+  The (three-clause) BSD License
+
+=cut
+
